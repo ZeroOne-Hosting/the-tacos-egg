@@ -11,13 +11,13 @@
 	const BOOT_LINE_DELAY_MS = 120;
 
 	const BOOT_SEQUENCE: OutputLine[] = [
-		{ text: 'ZeroOne Hosting Systems Inc.', instant: true },
+		{ text: 'Zero One Recovery Kernel — ZORK v2.1', instant: true },
 		{ text: '"Lowering expectations since our court date"', instant: true },
 		{ text: 'Kelso, WA - Garage Datacenter', instant: true },
 		{ text: '', instant: true },
 		{ text: 'Performing system checks...', instant: true },
 		{ text: 'Memory: 640K (should be enough for anyone)', instant: true },
-		{ text: 'Disk: /dev/garage0 mounted (83% Taco Bell receipts)', instant: true },
+		{ text: 'Disk: /dev/garage0 mounted', instant: true },
 		{ text: 'Network: Hyundai Kona backup power... ONLINE', instant: true },
 		{ text: 'UPS: Extension cord to neighbor\'s house... OK', instant: true },
 		{ text: 'Cooling: Garage door open... CONFIRMED', instant: true },
@@ -26,7 +26,6 @@
 		{ text: 'Password: ********', instant: true },
 		{ text: '', instant: true },
 		{ text: 'Last login: Mon Aug 11 08:23:14 1986', instant: true },
-		{ text: 'WARNING: Accounting discrepancy detected. Check your mail.', instant: true },
 		{ text: 'You have new mail.', instant: true },
 		{ text: '', instant: true }
 	];
@@ -52,8 +51,9 @@ Expected: $142.25
 Actual:   $141.50
 Delta:    -$0.75
 
-Please investigate and reply-all. Gary from accounting is already
-upset and he controls the garage door opener.
+Please investigate and reply-all. Cosworth is already
+upset and he controls the garage door opener. And mr.pink
+controls the disco ball, so let's not get him involved.
 
 -- ZeroOne Billing Daemon (cron job, mostly works)`
 		},
@@ -299,10 +299,19 @@ Action required: plug in the car.
 </script>
 
 <div class="crt-wrapper">
-	<div class="crt-screen">
-		<div class="scanlines" aria-hidden="true"></div>
+	<div class="monitor-body">
+		<div class="monitor-top">
+			<div class="vent-slots" aria-hidden="true">
+				{#each Array(8) as _}
+					<div class="vent"></div>
+				{/each}
+			</div>
+		</div>
+		<div class="crt-screen">
+			<div class="screen-glass" aria-hidden="true"></div>
+			<div class="scanlines" aria-hidden="true"></div>
 
-		<div class="terminal" bind:this={outputEl}>
+			<div class="terminal" bind:this={outputEl}>
 			{#each outputLines as line}
 				<div class="line">{line || '\u00a0'}</div>
 			{/each}
@@ -310,22 +319,30 @@ Action required: plug in the car.
 			{#if !isBooting}
 				<div class="input-row">
 					<span class="prompt">{PROMPT}</span>
-					<div class="input-area">
-						<input
-							bind:this={inputEl}
-							bind:value={inputValue}
-							onkeydown={onKeyDown}
-							class="cmd-input"
-							autocomplete="off"
-							autocorrect="off"
-							autocapitalize="off"
-							spellcheck={false}
-							aria-label="terminal input"
-						/>
-						<span class="cursor" aria-hidden="true"></span>
-					</div>
+					<span class="typed-text">{inputValue}</span>
+					<span class="cursor" aria-hidden="true"></span>
+					<input
+						bind:this={inputEl}
+						bind:value={inputValue}
+						onkeydown={onKeyDown}
+						class="cmd-input"
+						autocomplete="off"
+						autocorrect="off"
+						autocapitalize="off"
+						spellcheck={false}
+						aria-label="terminal input"
+					/>
 				</div>
 			{/if}
+		</div>
+		</div>
+		<div class="monitor-bottom">
+			<div class="monitor-label">ZeroOne</div>
+			<div class="monitor-controls" aria-hidden="true">
+				<div class="knob"></div>
+				<div class="knob"></div>
+				<div class="power-led"></div>
+			</div>
 		</div>
 	</div>
 </div>
@@ -342,48 +359,137 @@ Action required: plug in the car.
 		cursor: text;
 	}
 
+	.monitor-body {
+		position: relative;
+		width: 100%;
+		max-width: 960px;
+		height: 100%;
+		max-height: 760px;
+		background: linear-gradient(180deg, #d4cfc0 0%, #c8c2b0 30%, #b8b2a0 100%);
+		border-radius: 18px 18px 12px 12px;
+		padding: 12px 28px 8px;
+		display: flex;
+		flex-direction: column;
+		box-shadow:
+			0 4px 20px rgba(0, 0, 0, 0.5),
+			0 0 0 1px rgba(0, 0, 0, 0.2),
+			inset 0 1px 0 rgba(255, 255, 255, 0.3),
+			inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+	}
+
+	.monitor-top {
+		display: flex;
+		justify-content: center;
+		padding-bottom: 8px;
+	}
+
+	.vent-slots {
+		display: flex;
+		gap: 6px;
+	}
+
+	.vent {
+		width: 28px;
+		height: 3px;
+		background: linear-gradient(180deg, #9a9588 0%, #b0aa98 100%);
+		border-radius: 1px;
+		box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.3);
+	}
+
 	.crt-screen {
 		position: relative;
 		width: 100%;
-		max-width: 900px;
-		height: 100%;
-		max-height: 680px;
+		flex: 1;
 		background: #0a0a0a;
-		border-radius: 16px;
+		border-radius: 20px / 18px;
 		overflow: hidden;
 		box-shadow:
-			0 0 0 2px #1a1a1a,
-			0 0 0 4px #111,
-			0 0 60px 8px rgba(0, 255, 70, 0.15),
-			0 0 120px 20px rgba(0, 255, 70, 0.06),
-			inset 0 0 80px rgba(0, 0, 0, 0.6);
+			inset 0 0 60px rgba(0, 0, 0, 0.8),
+			0 0 0 3px #2a2a2a,
+			0 0 0 5px #1a1a1a,
+			0 0 30px 4px rgba(0, 255, 70, 0.08);
 	}
 
-	/* Subtle screen curvature via pseudo-element overlay */
+	.screen-glass {
+		position: absolute;
+		inset: 0;
+		background: radial-gradient(
+			ellipse at 30% 25%,
+			rgba(255, 255, 255, 0.06) 0%,
+			transparent 50%
+		);
+		border-radius: 20px / 18px;
+		pointer-events: none;
+		z-index: 12;
+	}
+
 	.crt-screen::before {
 		content: '';
 		position: absolute;
 		inset: 0;
 		background: radial-gradient(
 			ellipse at center,
-			transparent 60%,
-			rgba(0, 0, 0, 0.45) 100%
+			transparent 55%,
+			rgba(0, 0, 0, 0.5) 100%
 		);
-		border-radius: 16px;
+		border-radius: 20px / 18px;
 		pointer-events: none;
 		z-index: 10;
 	}
 
-	/* Phosphor flicker animation */
 	.crt-screen::after {
 		content: '';
 		position: absolute;
 		inset: 0;
 		background: rgba(0, 255, 70, 0.02);
-		border-radius: 16px;
+		border-radius: 20px / 18px;
 		pointer-events: none;
 		z-index: 11;
 		animation: flicker 0.15s infinite steps(1);
+	}
+
+	.monitor-bottom {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 10px 8px 6px;
+	}
+
+	.monitor-label {
+		font-family: 'IBM Plex Mono', monospace;
+		font-size: 13px;
+		font-weight: 700;
+		letter-spacing: 3px;
+		text-transform: uppercase;
+		color: #7a7568;
+		text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+	}
+
+	.monitor-controls {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+
+	.knob {
+		width: 18px;
+		height: 18px;
+		border-radius: 50%;
+		background: linear-gradient(145deg, #8a8578, #6a6458);
+		box-shadow:
+			0 1px 3px rgba(0, 0, 0, 0.4),
+			inset 0 1px 1px rgba(255, 255, 255, 0.15);
+		border: 1px solid #5a5448;
+	}
+
+	.power-led {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background: #33ff57;
+		box-shadow:
+			0 0 4px rgba(51, 255, 87, 0.8),
+			0 0 10px rgba(51, 255, 87, 0.4);
 	}
 
 	@keyframes flicker {
@@ -449,26 +555,20 @@ Action required: plug in the car.
 			0 0 10px rgba(51, 255, 87, 0.4);
 	}
 
-	.input-area {
-		position: relative;
-		display: flex;
-		align-items: center;
-		flex: 1;
-	}
-
-	.cmd-input {
-		background: transparent;
-		border: none;
-		outline: none;
+	.typed-text {
+		white-space: pre;
 		color: #33ff57;
-		font-family: 'IBM Plex Mono', 'VT323', monospace;
-		font-size: 14px;
-		line-height: 1.55;
-		width: 100%;
-		caret-color: transparent;
 		text-shadow:
 			0 0 4px rgba(51, 255, 87, 0.8),
 			0 0 10px rgba(51, 255, 87, 0.4);
+	}
+
+	.cmd-input {
+		position: absolute;
+		left: -9999px;
+		opacity: 0;
+		width: 0;
+		height: 0;
 	}
 
 	.cursor {
