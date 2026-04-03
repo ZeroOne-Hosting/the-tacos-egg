@@ -539,7 +539,7 @@ Terminal Parser
 
 **Clue interpretation:** When the player runs certain commands on evidence-adjacent files, the LLM can generate contextually appropriate "reveal" text — additional detail in a log entry, a file that contains something unexpected, a comment in a config file that opens a new thread.
 
-**Red herring generation:** The LLM generates plausible-but-false leads that fit the investigation context. A suspicious login that turns out to be a legitimate grad student. A military-sounding filename that is actually a professor's D&D campaign notes. These are seeded at chapter initialization so they are consistent within a session.
+**Red herring generation:** The LLM generates plausible-but-false leads that fit the investigation context. A suspicious login that turns out to be a client legitimately accessing their own files at an odd hour. A military-sounding filename that is actually a hosted client's D&D campaign notes. These are seeded at chapter initialization so they are consistent within a session.
 
 **Dynamic corkboard summary:** The `corkboard summary` command triggers an LLM synthesis of the current evidence state. The output is grounded in the actual evidence objects on the corkboard — the LLM cannot invent evidence, only interpret and connect what is there.
 
@@ -579,14 +579,16 @@ InvestigationState
 
 ### Premise
 
-While waiting for the phone company to complete a trace, Cliff Stoll (the real sysadmin who inspired this game) was known for baking cookies and feeding people who helped him. In **The Taco's Egg**, the player's analog is TacoNet — a fictional dial-up taco ordering service available on the university network.
+While waiting for the phone company to complete a trace, Cliff Stoll (the real sysadmin who inspired this game) was known for baking cookies and feeding people who helped him. At ZeroOne Hosting, the staff runs on Taco Bell. This is not a lifestyle choice — it is an operational reality. The nearest sit-down restaurant is forty minutes away. The nearest Taco Bell is six minutes.
+
+In **The Taco's Egg**, the player's ordering mechanism is TacoNet — a dial-up Taco Bell ordering terminal that Randy jury-rigged into the company's network sometime in 1986, ostensibly as a "proof of concept for e-commerce." It connects to a dedicated line at the Kelso Taco Bell, where a very patient employee named Jorge has been manually keying in orders for two years.
 
 It is ridiculous. It is also the game's primary comedy mechanism and a pressure release valve between tense investigation segments.
 
 ### Accessing TacoNet
 
 ```
-sysadmin@berzerkeley% taconet
+sysadmin@zeroone% taconet
 ```
 
 The terminal clears and renders a new ASCII UI:
@@ -594,7 +596,7 @@ The terminal clears and renders a new ASCII UI:
 ```
 ╔════════════════════════════════════════════════╗
 ║         T A C O N E T  v2.1                   ║
-║    Dial-Up Taco Delivery for the Modern Age   ║
+║   Computerized Ordering for the Modern Age    ║
 ║                                               ║
 ║  "When the hacker can wait, but you can't."   ║
 ╚════════════════════════════════════════════════╝
@@ -639,15 +641,15 @@ TacoPoints are earned with every order. They serve no mechanical purpose except 
 
 ### NPC Taco Interactions
 
-- Helen from accounting can be sent tacos. She will be confused and then touched.
-- Agent Paulson will decline tacos on policy grounds, then order some anyway in a follow-up mail.
-- The university president's office, if sent tacos, will return them with a formal memo.
+- Helen can be sent tacos via TacoNet's "gift order" feature (Randy added this at 2am one night and it mostly works). She will be confused and then touched.
+- Agent Paulson will decline tacos on policy grounds, then order some anyway in a follow-up mail. He gets a Chalupa.
+- Randy, if sent tacos, will eat them and then ask the player to expense them against the investigation budget. There is no investigation budget.
 
-### The Taco Shop
+### The Taco Bell
 
-TacoNet is operated by **Taqueria La Terminal**, a family-owned taco shop two blocks from campus. They have had a "online ordering" system since 1986. They are very proud of it. Their system is almost certainly running on an Apple IIe.
+TacoNet connects to the **Kelso Taco Bell** on Minor Road. Jorge, the night-shift manager, has been fielding TacoNet orders since Randy cold-called the franchise in 1986 and convinced someone that this was the future of fast food ordering. Jorge has a laminated card explaining the procedure taped to the register. He is professionally skeptical but has never missed an order.
 
-If the player investigates Taqueria La Terminal's subnet presence (entirely possible using in-game tools), they will find a single host: `tacos.la-terminal.uucp`. Its only service is a UUCP mail relay for order forms. This is not a plot point. It is just there for the player who wants to look.
+If the player investigates the TacoNet connection (entirely possible using in-game tools), they will find a single host: `tb-kelso.taconet.uucp`. Its only service is a UUCP mail relay for order forms. This is not a plot point. It is just there for the player who wants to look.
 
 ---
 
@@ -665,9 +667,9 @@ Every system — the trace, the corkboard, the FBI, the phone company — is pre
 
 **Terminal output:** Terse, functional, period-accurate. No modern idioms. No humor in system output — it is a 1988 Unix system and it will behave like one.
 
-**NPC mail:** Ranges from collegial to bureaucratic. Helen writes in a warm, slightly nervous office-professional voice. Paulson writes in clipped, cautious federal-employee sentences. The CERT contact writes in the excited, slightly breathless style of someone who has been waiting for someone to take this seriously.
+**NPC mail:** Ranges from collegial to bureaucratic. Helen writes in a warm, slightly nervous office-professional voice. Randy writes like someone dictating to himself while doing something else. Paulson writes in clipped, cautious federal-employee sentences. The CERT contact writes in the excited, slightly breathless style of someone who has been waiting for someone to take this seriously.
 
-**TacoNet copy:** Enthusiastically overclaims its technical sophistication. "State-of-the-art computerized ordering." "Real-time delivery coordination." None of this is true. The tacos are still very good.
+**TacoNet copy:** Enthusiastically overclaims its technical sophistication. "State-of-the-art computerized ordering." "Real-time delivery coordination." Jorge is a human being manually reading these orders off a dot-matrix printout. The Chalupas are still very good.
 
 **Chapter titles and internal headings:** Matter-of-fact. The drama is not in the title — it's in what happens after you open the file.
 
@@ -715,6 +717,7 @@ The MVP is Chapters 1 and 2, with partial Chapter 3 (honeypot setup but no trace
 
 **NPC:**
 - Helen (mail only)
+- Randy (mail only, one dismissive exchange)
 - Agent Paulson (mail only, one exchange)
 - One CERT contact mail (foreshadowing)
 
