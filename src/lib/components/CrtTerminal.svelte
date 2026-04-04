@@ -8,11 +8,14 @@ import {
 	HELP_TEXT,
 	WHO_POOL,
 } from '$lib/game-data.js';
-import { initZork, type ZorkEngine } from '$lib/games/zork.js';
+type ZorkEngine = {
+	sendCommand(input: string): string[];
+	getInitialText(): string[];
+};
 
 const PROMPT = 'zeroone> ';
-const TYPING_DELAY_MS = 18;
-const BOOT_LINE_DELAY_MS = 120;
+const TYPING_DELAY_MS = 10;
+const BOOT_LINE_DELAY_MS = 90;
 
 let outputLines = $state<string[]>([]);
 let inputValue = $state('');
@@ -147,6 +150,7 @@ async function handleCommand(raw: string): Promise<void> {
 	} else if (verb === 'zork') {
 		await appendLine('Loading Zork I...');
 		try {
+			const { initZork } = await import('$lib/games/zork.js');
 			const engine = await initZork();
 			zorkEngine = engine;
 			zorkActive = true;
