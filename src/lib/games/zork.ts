@@ -10,16 +10,6 @@
  *                         → returns captured lines
  */
 
-// These are CommonJS modules; Vite handles the CJS→ESM interop at bundle time.
-// The `any` cast is intentional: both packages lack TypeScript declarations.
-import GlkApi from 'glkote-term/src/glkapi.js';
-import ifvms from 'ifvms';
-
-// biome-ignore lint/suspicious/noExplicitAny: ifvms lacks TypeScript declarations
-const ZVM = (ifvms as any).ZVM;
-// biome-ignore lint/suspicious/noExplicitAny: glkote-term lacks TypeScript declarations
-const Glk = GlkApi as any;
-
 // --------------------------------------------------------------------------
 // Minimal stub Dialog (no file I/O — save/restore not supported)
 // --------------------------------------------------------------------------
@@ -48,7 +38,6 @@ class CaptureGlkOte {
 	/** Called by Glk.init() to set up the interface */
 	init(iface: { accept: (res: object) => void }) {
 		this._iface = iface;
-		// Send the 'init' response to start the VM
 		this._iface.accept({
 			type: 'init',
 			gen: this._generation,
@@ -79,7 +68,10 @@ class CaptureGlkOte {
 		type: string;
 		gen: number;
 		windows?: Array<{ id: number; type: string }>;
-		content?: Array<{ id: number; text?: Array<{ append?: boolean; content?: unknown[] }> }>;
+		content?: Array<{
+			id: number;
+			text?: Array<{ append?: boolean; content?: unknown[] }>;
+		}>;
 		input?: Array<{ id: number; type: string }>;
 	}) {
 		if (data.type === 'error') {
@@ -91,7 +83,6 @@ class CaptureGlkOte {
 
 		this._generation = data.gen;
 
-		// Track the main buffer window id
 		if (data.windows) {
 			for (const win of data.windows) {
 				if (win.type === 'buffer') {
@@ -100,14 +91,12 @@ class CaptureGlkOte {
 			}
 		}
 
-		// Extract text from the buffer window
 		if (data.content) {
 			for (const block of data.content) {
 				if (block.id !== this._windowId) continue;
 				if (!block.text) continue;
 				for (const lineObj of block.text) {
 					const line = this._extractText(lineObj);
-					// 'append' means this text continues the previous line
 					if (lineObj.append && this._pendingLines.length > 0) {
 						this._pendingLines[this._pendingLines.length - 1] += line;
 					} else {
@@ -117,7 +106,6 @@ class CaptureGlkOte {
 			}
 		}
 
-		// Track whether we're waiting for input
 		this._waitingForLine = false;
 		if (data.input) {
 			for (const inp of data.input) {
@@ -128,10 +116,8 @@ class CaptureGlkOte {
 		}
 	}
 
-	/** Feed a line of player input back to the VM */
 	sendLine(input: string): void {
 		if (!this._iface || this._windowId === null) return;
-		this._generation += 1;
 		this._iface.accept({
 			type: 'line',
 			gen: this._generation,
@@ -140,7 +126,6 @@ class CaptureGlkOte {
 		});
 	}
 
-	/** Drain and return all captured lines since last call */
 	drainLines(): string[] {
 		const lines = this._pendingLines;
 		this._pendingLines = [];
@@ -151,7 +136,6 @@ class CaptureGlkOte {
 		return this._waitingForLine;
 	}
 
-	// Extract plain text from a GlkOte line content array
 	private _extractText(lineObj: { content?: unknown[] }): string {
 		if (!lineObj.content) return '';
 		let text = '';
@@ -159,7 +143,6 @@ class CaptureGlkOte {
 		for (let i = 0; i < content.length; i++) {
 			const item = content[i];
 			if (typeof item === 'string') {
-				// item is a style name, next item is the text
 				i++;
 				if (i < content.length) {
 					text += String(content[i]);
@@ -171,7 +154,6 @@ class CaptureGlkOte {
 		return text;
 	}
 
-	// Satisfy GlkOte interface stubs
 	error(msg: string) {
 		throw new Error(msg);
 	}
@@ -190,15 +172,10 @@ export class ZorkEngine {
 		this._glkOte = glkOte;
 	}
 
-	/** Returns the opening text lines after game startup */
 	getInitialText(): string[] {
 		return this._glkOte.drainLines();
 	}
 
-	/**
-	 * Send a player command and return the output lines.
-	 * Returns empty array if VM is not waiting for line input.
-	 */
 	sendCommand(input: string): string[] {
 		if (!this._glkOte.isWaitingForLine()) return [];
 		this._glkOte.sendLine(input);
@@ -212,6 +189,19 @@ export class ZorkEngine {
 
 /** Load the game file and start the VM. Resolves with a ZorkEngine. */
 export async function initZork(): Promise<ZorkEngine> {
+	// Dynamic imports — vendored glkapi.js exports a factory function
+	const [{ default: createGlk }, ifvmsModule] = await Promise.all([
+		import('$lib/vendor/glkapi.js'),
+		import('ifvms'),
+	]);
+
+	// Create a fresh Glk instance (evaluated in sloppy mode via Function constructor)
+	// biome-ignore lint/suspicious/noExplicitAny: glkote-term lacks TypeScript declarations
+	const Glk = (createGlk as any)();
+
+	// biome-ignore lint/suspicious/noExplicitAny: ifvms lacks TypeScript declarations
+	const ZVM = ((ifvmsModule as any).default ?? ifvmsModule).ZVM;
+
 	const response = await fetch('/games/zork1.z3');
 	if (!response.ok) {
 		throw new Error(`Failed to load Zork game file: ${response.status} ${response.statusText}`);
@@ -230,9 +220,6 @@ export async function initZork(): Promise<ZorkEngine> {
 	};
 
 	vm.prepare(data, options);
-
-	// This triggers GlkOte.init() → accept('init') → vm.init() → vm runs
-	// until the first glk_select, then Glk.update() is called → glkOte.update()
 	Glk.init(options);
 
 	return new ZorkEngine(glkOte);

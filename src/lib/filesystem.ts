@@ -273,9 +273,6 @@ const FILESYSTEM: FSDir = dir({
 			'.plan': file(
 				'Currently investigating a $0.75 billing discrepancy.\nRandy says its nothing. Checking anyway.',
 			),
-			'notes.txt': file(
-				'Billing investigation notes\n\nHelen flagged a 75 cents gap in the October compute invoices.\nThe discrepancy traces to the cosworth account: 9 seconds of CPU on Oct 6.\nLogin from gateway-pdx.uucp at 02:17. Not a local terminal.\n\nRandy says he left the session open. Timestamps do not match.',
-			),
 		}),
 		dirk: dir({
 			'out_of_office.txt': file(

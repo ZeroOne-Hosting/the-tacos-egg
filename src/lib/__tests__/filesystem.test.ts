@@ -129,15 +129,15 @@ describe('VirtualFS', () => {
 			expect(content).toContain('ALERT');
 		});
 
-		it('reads /home/sysadmin/notes.txt', () => {
-			const content = fs.cat('/home/sysadmin/notes.txt');
-			expect(content).toContain('75 cents');
+		it('reads /home/sysadmin/.plan', () => {
+			const content = fs.cat('/home/sysadmin/.plan');
+			expect(content).toContain('billing discrepancy');
 		});
 
 		it('reads a relative path from cwd', () => {
 			fs.cd('/home/sysadmin');
-			const content = fs.cat('notes.txt');
-			expect(content).toContain('75 cents');
+			const content = fs.cat('.plan');
+			expect(content).toContain('billing discrepancy');
 		});
 	});
 

@@ -15,6 +15,24 @@ type ZorkEngine = {
 const HOME = '/home/sysadmin';
 const TYPING_DELAY_MS = 10;
 const BOOT_LINE_DELAY_MS = 90;
+const LOGIN_COOKIE = 'zeroone_session';
+
+function setLoginCookie(): void {
+	if (typeof document !== 'undefined') {
+		document.cookie = `${LOGIN_COOKIE}=sysadmin; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Lax`;
+	}
+}
+
+function clearLoginCookie(): void {
+	if (typeof document !== 'undefined') {
+		document.cookie = `${LOGIN_COOKIE}=; path=/; max-age=0`;
+	}
+}
+
+function hasLoginCookie(): boolean {
+	if (typeof document === 'undefined') return false;
+	return document.cookie.split(';').some((c) => c.trim().startsWith(`${LOGIN_COOKIE}=`));
+}
 
 const vfs = new VirtualFS();
 vfs.cd(HOME);
@@ -27,6 +45,7 @@ function buildPrompt(): string {
 	return `sysadmin@zeroone:${display}> `;
 }
 
+let currentPrompt = $state(buildPrompt());
 let outputLines = $state<string[]>([]);
 let inputValue = $state('');
 let commandHistory = $state<string[]>([]);
@@ -81,8 +100,19 @@ async function runBootSequence(): Promise<void> {
 		await sleep(BOOT_LINE_DELAY_MS);
 	}
 	await appendLine('');
+	if (hasLoginCookie()) {
+		await appendLine('Login: sysadmin');
+		await appendLine('Password: ********');
+		loginPhase = 'done';
+		await appendLine('');
+		await appendLine('Last login: Mon Aug 11 08:23:14 1986');
+		await appendLine('You have new mail.');
+		new Audio('/audio/yougotmail.mp3').play().catch(() => {});
+		await appendLine('');
+	} else {
+		loginPhase = 'username';
+	}
 	isBooting = false;
-	loginPhase = 'username';
 	inputEl?.focus();
 }
 
@@ -93,6 +123,7 @@ async function handleLogin(value: string): Promise<void> {
 	} else if (loginPhase === 'password') {
 		await appendLine(`Password: ${'*'.repeat(value.length)}`);
 		loginPhase = 'done';
+		setLoginCookie();
 		await appendLine('');
 		await appendLine('Last login: Mon Aug 11 08:23:14 1986');
 		await appendLine('You have new mail.');
@@ -175,6 +206,14 @@ async function handleCommand(raw: string): Promise<void> {
 				);
 			}
 			break;
+		case 'logout':
+			clearLoginCookie();
+			await appendLine('');
+			await appendLine('Connection closed.');
+			await sleep(1000);
+			outputLines = [];
+			loginPhase = 'username';
+			return;
 		case 'not-found':
 			await typeLines([`${cmd}: command not found`]);
 			break;
@@ -193,8 +232,9 @@ async function handleCommand(raw: string): Promise<void> {
 		await appendLine(`[CHAPTER ${gameState.chapter}]`);
 	}
 
-	// Save state
+	// Save state and update prompt
 	gameState.save();
+	currentPrompt = buildPrompt();
 }
 
 async function handleZorkInput(raw: string): Promise<void> {
@@ -217,6 +257,10 @@ async function handleZorkInput(raw: string): Promise<void> {
 
 	await appendLine(`>${input}`);
 	if (zorkEngine) {
+		if (!zorkEngine.isActive()) {
+			await appendLine('[Zork VM not ready for input — try again]');
+			return;
+		}
 		const lines = zorkEngine.sendCommand(input);
 		for (const line of lines) {
 			await appendLine(line);
@@ -298,7 +342,7 @@ onMount(() => {
 							<span class="prompt">{'>'}</span>
 							<span class="typed-text">{inputValue}</span>
 						{:else if loginPhase === 'done'}
-							<span class="prompt">{buildPrompt()}</span>
+							<span class="prompt">{currentPrompt}</span>
 							<span class="typed-text">{inputValue}</span>
 						{:else if loginPhase === 'password'}
 							<span class="prompt">Password: </span>
@@ -575,7 +619,8 @@ onMount(() => {
 	}
 
 	.line {
-		white-space: pre;
+		white-space: pre-wrap;
+		word-break: break-word;
 		display: block;
 		min-height: 1.55em;
 	}

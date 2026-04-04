@@ -144,6 +144,40 @@ See you on the 13th.
 -- Cosworth Mallard
    Waterfowl Solutions LLC`,
 	},
+	{
+		id: 6,
+		from: 'sysadmin@zeroone.local',
+		subject: 'Investigation notes — DO NOT DELETE',
+		date: 'Thu Oct 13 10:15:33 1988',
+		body: `From: sysadmin@zeroone.local
+To: sysadmin@zeroone.local
+Date: Thu Oct 13 10:15:33 1988
+Subject: Investigation notes — DO NOT DELETE
+
+Sending this to myself so I don't lose it.
+
+Helen flagged a 75 cents gap in the October compute invoices.
+The discrepancy traces to the cosworth account: 9 seconds of
+CPU time on Oct 6.
+
+Login from gateway-pdx.uucp at 02:17 AM. Not a local terminal.
+
+Cosworth was at the Fowl Expo in Portland. No laptop. No modem.
+He could NOT have logged in.
+
+Randy says he "left the session open." The timestamps do not
+match. Randy is either confused or lying.
+
+Someone else used the cosworth account.
+
+Next steps:
+  - Run sa to verify billing totals
+  - Check lastcomm for cosworth's commands
+  - Check last for login history
+  - Figure out what gateway-pdx.uucp is
+
+-- sysadmin`,
+	},
 ];
 
 export const WHO_ALWAYS = ['sysadmin', 'root'];
@@ -460,4 +494,5 @@ export const HELP_TEXT = [
 	'  man <command>     Show manual page',
 	'  history           Show command history',
 	'  casefile [sub]    View collected evidence (list|connections|timeline)',
+	'  logout            Log out of the system',
 ];

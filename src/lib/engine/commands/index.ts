@@ -15,6 +15,7 @@ export type CommandResult =
 	| { type: 'clear' }
 	| { type: 'mail' }
 	| { type: 'zork' }
+	| { type: 'logout' }
 	| { type: 'not-found'; cmd: string };
 
 export type CommandHandler = (
@@ -25,6 +26,12 @@ export type CommandHandler = (
 ) => CommandResult;
 
 const HOME = '/home/sysadmin';
+
+function formatSize(bytes: number): string {
+	if (bytes < 1024) return `${bytes}`;
+	if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)}K`;
+	return `${(bytes / (1024 * 1024)).toFixed(1)}M`;
+}
 
 const REGISTRY: Record<string, CommandHandler> = {
 	help: (_args, _state, _vfs) => ({ type: 'lines', lines: HELP_TEXT }),
@@ -51,17 +58,59 @@ const REGISTRY: Record<string, CommandHandler> = {
 	},
 
 	ls: (args, _state, vfs) => {
-		const showHidden = args.includes('-a') || args.includes('-la') || args.includes('-al');
+		const flags = args.filter((a) => a.startsWith('-')).join('');
+		const showHidden = flags.includes('a');
+		const longFormat = flags.includes('l');
+		const humanReadable = flags.includes('h');
 		const pathArg = args.find((a) => !a.startsWith('-'));
-		const entries = vfs.ls(pathArg, showHidden);
-		if (entries.length === 0 && pathArg) {
-			const node = vfs.getNode(vfs.resolve(pathArg));
-			if (!node) {
-				return { type: 'lines', lines: [`ls: ${pathArg}: No such file or directory`] };
-			}
-			return { type: 'lines', lines: [pathArg] };
+		const resolved = vfs.resolve(pathArg ?? '');
+		const node = pathArg ? vfs.getNode(resolved) : vfs.getNode(vfs.pwd());
+
+		if (pathArg && !node) {
+			return { type: 'lines', lines: [`ls: ${pathArg}: No such file or directory`] };
 		}
-		return { type: 'lines', lines: entries.length > 0 ? [entries.join('  ')] : [''] };
+		if (node && node.type === 'file') {
+			if (longFormat) {
+				const size = node.content.length;
+				const sizeStr = humanReadable ? formatSize(size) : String(size);
+				return {
+					type: 'lines',
+					lines: [`-rw-r--r--  1 sysadmin staff  ${sizeStr.padStart(6)}  Oct 13 08:00  ${pathArg}`],
+				};
+			}
+			return { type: 'lines', lines: [pathArg ?? ''] };
+		}
+
+		const entries = vfs.ls(pathArg, showHidden);
+		if (!longFormat) {
+			return { type: 'lines', lines: entries.length > 0 ? [entries.join('  ')] : [''] };
+		}
+
+		// Long format
+		const dir = node as {
+			type: 'dir';
+			children: Record<
+				string,
+				{ type: string; content?: string; children?: Record<string, unknown> }
+			>;
+		};
+		const lines: string[] = [`total ${entries.length}`];
+		lines.push('drwxr-xr-x   2 sysadmin staff       0  Oct 13 08:00  .');
+		lines.push('drwxr-xr-x   2 sysadmin staff       0  Oct 13 08:00  ..');
+		for (const entry of entries) {
+			const name = entry.replace(/\/$/, '');
+			const child = dir.children[name];
+			if (!child) continue;
+			const isDir = child.type === 'dir';
+			const perms = isDir ? 'drwxr-xr-x' : '-rw-r--r--';
+			const size = isDir ? Object.keys(child.children ?? {}).length : (child.content ?? '').length;
+			const sizeStr = humanReadable ? formatSize(size) : String(size);
+			const links = isDir ? String(2 + Object.keys(child.children ?? {}).length) : '1';
+			lines.push(
+				`${perms}  ${links.padStart(2)} sysadmin staff  ${sizeStr.padStart(6)}  Oct 13 08:00  ${entry}`,
+			);
+		}
+		return { type: 'lines', lines };
 	},
 
 	cat: (args, _state, vfs) => {
@@ -99,6 +148,9 @@ const REGISTRY: Record<string, CommandHandler> = {
 	}),
 
 	zork: (_args, _state, _vfs) => ({ type: 'zork' }),
+
+	logout: (_args, _state, _vfs) => ({ type: 'logout' }),
+	exit: (_args, _state, _vfs) => ({ type: 'logout' }),
 
 	sa: handleSa,
 	last: handleLast,
