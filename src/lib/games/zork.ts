@@ -12,14 +12,12 @@
 
 // These are CommonJS modules; Vite handles the CJS→ESM interop at bundle time.
 // The `any` cast is intentional: both packages lack TypeScript declarations.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-import ifvms from 'ifvms';
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 import GlkApi from 'glkote-term/src/glkapi.js';
+import ifvms from 'ifvms';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: ifvms lacks TypeScript declarations
 const ZVM = (ifvms as any).ZVM;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: glkote-term lacks TypeScript declarations
 const Glk = GlkApi as any;
 
 // --------------------------------------------------------------------------
@@ -85,7 +83,7 @@ class CaptureGlkOte {
 		input?: Array<{ id: number; type: string }>;
 	}) {
 		if (data.type === 'error') {
-			throw new Error('ZVM error: ' + JSON.stringify(data));
+			throw new Error(`ZVM error: ${JSON.stringify(data)}`);
 		}
 		if (data.type !== 'update' && data.type !== 'exit') {
 			return;
@@ -174,7 +172,9 @@ class CaptureGlkOte {
 	}
 
 	// Satisfy GlkOte interface stubs
-	error(msg: string) { throw new Error(msg); }
+	error(msg: string) {
+		throw new Error(msg);
+	}
 	log() {}
 	warning() {}
 }
