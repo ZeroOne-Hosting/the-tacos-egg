@@ -19,7 +19,15 @@ clean:
     rm -rf node_modules .svelte-kit build
 
 format:
-    @echo "No formatter configured"
+    bunx biome check --write .
 
 lint:
-    @echo "No linter configured"
+    bunx biome check .
+
+test:
+    bun run vitest run
+
+test-watch:
+    bun run vitest
+
+ci: check lint test build
