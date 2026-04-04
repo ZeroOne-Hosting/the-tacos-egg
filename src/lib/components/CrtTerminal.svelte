@@ -1,5 +1,6 @@
 <script lang="ts">
 import { onMount, tick } from 'svelte';
+import { VirtualFS } from '$lib/filesystem.js';
 import {
 	BOOT_SEQUENCE,
 	EMAILS,
@@ -8,14 +9,26 @@ import {
 	HELP_TEXT,
 	WHO_POOL,
 } from '$lib/game-data.js';
+import { MailClient } from '$lib/components/MailClient.js';
+
 type ZorkEngine = {
 	sendCommand(input: string): string[];
 	getInitialText(): string[];
 };
 
-const PROMPT = 'zeroone> ';
+const HOME = '/home/sysadmin';
 const TYPING_DELAY_MS = 10;
 const BOOT_LINE_DELAY_MS = 90;
+
+const vfs = new VirtualFS();
+vfs.cd(HOME);
+
+function buildPrompt(): string {
+	const cwd = vfs.pwd();
+	const display =
+		cwd === HOME ? '~' : cwd.startsWith(`${HOME}/`) ? `~${cwd.slice(HOME.length)}` : cwd;
+	return `sysadmin@zeroone:${display}> `;
+}
 
 let outputLines = $state<string[]>([]);
 let inputValue = $state('');
@@ -28,6 +41,9 @@ let outputEl = $state<HTMLDivElement | undefined>();
 let inputEl = $state<HTMLInputElement | undefined>();
 let zorkActive = $state(false);
 let zorkEngine = $state<ZorkEngine | null>(null);
+let mailActive = $state(false);
+let mailClient = $state<MailClient | null>(null);
+const MAIL_VIEWPORT = 24;
 
 async function sleep(ms: number): Promise<void> {
 	return new Promise((r) => setTimeout(r, ms));
@@ -62,6 +78,7 @@ async function typeLines(lines: string[]): Promise<void> {
 
 async function runBootSequence(): Promise<void> {
 	isBooting = true;
+	new Audio('/audio/win95.mp3').play().catch(() => {});
 	for (const line of BOOT_SEQUENCE) {
 		await appendLine(line.text);
 		await sleep(BOOT_LINE_DELAY_MS);
@@ -82,6 +99,7 @@ async function handleLogin(value: string): Promise<void> {
 		await appendLine('');
 		await appendLine('Last login: Mon Aug 11 08:23:14 1986');
 		await appendLine('You have new mail.');
+		new Audio('/audio/yougotmail.mp3').play().catch(() => {});
 		await appendLine('');
 	}
 }
@@ -92,18 +110,44 @@ function scrollToBottom(): void {
 	}
 }
 
+function renderMailClient(): void {
+	if (!mailClient) return;
+	const lines =
+		mailClient.getView() === 'inbox'
+			? mailClient.renderInbox(MAIL_VIEWPORT)
+			: mailClient.renderEmail(MAIL_VIEWPORT);
+	outputLines = lines;
+	tick().then(scrollToBottom);
+}
+
+async function handleMailKey(e: KeyboardEvent): Promise<void> {
+	if (!mailClient) return;
+	e.preventDefault();
+	const action = mailClient.handleKey(e.key, e.ctrlKey);
+	if (action === 'exit') {
+		mailActive = false;
+		mailClient = null;
+		outputLines = [];
+		await appendLine('[Mail closed]');
+		await appendLine('');
+	} else {
+		renderMailClient();
+	}
+}
+
 async function handleCommand(raw: string): Promise<void> {
 	const cmd = raw.trim();
 
-	await appendLine(`${PROMPT}${cmd}`);
+	await appendLine(`${buildPrompt()}${cmd}`);
 
 	if (cmd === '') return;
 
 	commandHistory = [cmd, ...commandHistory];
 	historyIndex = -1;
 
-	const parts = cmd.toLowerCase().split(/\s+/);
-	const verb = parts[0];
+	// preserve original casing for path arguments, but parse verb lowercase
+	const parts = cmd.split(/\s+/);
+	const verb = parts[0].toLowerCase();
 
 	if (verb === 'help') {
 		await typeLines(HELP_TEXT);
@@ -115,17 +159,49 @@ async function handleCommand(raw: string): Promise<void> {
 		await typeLines(generateWho());
 	} else if (verb === 'ps') {
 		await typeLines(generatePs());
+	} else if (verb === 'pwd') {
+		await typeLines([vfs.pwd()]);
+	} else if (verb === 'cd') {
+		const target = parts[1] ?? HOME;
+		if (!vfs.cd(target)) {
+			await typeLines([`cd: ${target}: No such file or directory`]);
+		}
+	} else if (verb === 'ls') {
+		const args = parts.slice(1);
+		const showHidden = args.includes('-a') || args.includes('-la') || args.includes('-al');
+		const pathArg = args.find((a) => !a.startsWith('-'));
+		const entries = vfs.ls(pathArg, showHidden);
+		if (entries.length === 0 && pathArg) {
+			const node = vfs.getNode(vfs.resolve(pathArg));
+			if (!node) {
+				await typeLines([`ls: ${pathArg}: No such file or directory`]);
+			} else {
+				await typeLines([pathArg]);
+			}
+		} else {
+			await typeLines(entries.length > 0 ? [entries.join('  ')] : ['']);
+		}
+	} else if (verb === 'cat') {
+		const pathArg = parts[1];
+		if (!pathArg) {
+			await typeLines(['cat: missing operand']);
+		} else {
+			const content = vfs.cat(pathArg);
+			if (content === null) {
+				const node = vfs.getNode(vfs.resolve(pathArg));
+				if (!node) {
+					await typeLines([`cat: ${pathArg}: No such file or directory`]);
+				} else {
+					await typeLines([`cat: ${pathArg}: Is a directory`]);
+				}
+			} else {
+				await typeLines(content === '' ? [''] : content.split('\n'));
+			}
+		}
 	} else if (verb === 'mail') {
-		const header = [
-			'Mail version 2.18 6/28/83.  Type ? for help.',
-			`"/usr/spool/mail/sysadmin": ${EMAILS.length} messages, 1 new`,
-			'',
-		];
-		const inbox = EMAILS.map(
-			(e) =>
-				`${e.id === 1 ? 'N' : ' '} ${String(e.id).padEnd(2)} ${e.from.padEnd(30)} ${e.date.slice(0, 12)}  "${e.subject}"`,
-		);
-		await typeLines([...header, ...inbox]);
+		mailClient = new MailClient(EMAILS);
+		mailActive = true;
+		renderMailClient();
 	} else if (verb === 'read') {
 		const n = parseInt(parts[1] ?? '', 10);
 		const email = EMAILS.find((e) => e.id === n);
@@ -196,6 +272,11 @@ async function handleZorkInput(raw: string): Promise<void> {
 async function onKeyDown(e: KeyboardEvent): Promise<void> {
 	if (isBooting || isTyping) return;
 
+	if (mailActive) {
+		await handleMailKey(e);
+		return;
+	}
+
 	if (e.key === 'Enter') {
 		const val = inputValue;
 		inputValue = '';
@@ -257,20 +338,22 @@ onMount(() => {
 
 			{#if !isBooting}
 				<div class="input-row">
-					{#if loginPhase === 'done' && zorkActive}
-						<span class="prompt">{'>'}</span>
-						<span class="typed-text">{inputValue}</span>
-					{:else if loginPhase === 'done'}
-						<span class="prompt">{PROMPT}</span>
-						<span class="typed-text">{inputValue}</span>
-					{:else if loginPhase === 'password'}
-						<span class="prompt">Password: </span>
-						<span class="typed-text">{'*'.repeat(inputValue.length)}</span>
-					{:else}
-						<span class="prompt">Login: </span>
-						<span class="typed-text">{inputValue}</span>
+					{#if !mailActive}
+						{#if loginPhase === 'done' && zorkActive}
+							<span class="prompt">{'>'}</span>
+							<span class="typed-text">{inputValue}</span>
+						{:else if loginPhase === 'done'}
+							<span class="prompt">{buildPrompt()}</span>
+							<span class="typed-text">{inputValue}</span>
+						{:else if loginPhase === 'password'}
+							<span class="prompt">Password: </span>
+							<span class="typed-text">{'*'.repeat(inputValue.length)}</span>
+						{:else}
+							<span class="prompt">Login: </span>
+							<span class="typed-text">{inputValue}</span>
+						{/if}
+						<span class="cursor" aria-hidden="true"></span>
 					{/if}
-					<span class="cursor" aria-hidden="true"></span>
 					<input
 						bind:this={inputEl}
 						bind:value={inputValue}
