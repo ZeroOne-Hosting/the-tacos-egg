@@ -136,11 +136,20 @@ export class GameState {
 	}
 
 	save(): void {
-		localStorage.setItem(STORAGE_KEY, this.serialize());
+		try {
+			localStorage.setItem(STORAGE_KEY, this.serialize());
+		} catch {
+			// SSR or localStorage unavailable
+		}
 	}
 
 	static load(): GameState | null {
-		const raw = localStorage.getItem(STORAGE_KEY);
+		let raw: string | null;
+		try {
+			raw = localStorage.getItem(STORAGE_KEY);
+		} catch {
+			return null;
+		}
 		if (!raw) return null;
 		try {
 			return GameState.deserialize(raw);
