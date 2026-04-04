@@ -213,15 +213,6 @@ const FILESYSTEM: FSDir = dir({
 			'.bashrc': file(
 				'# .bashrc\nexport PS1="sysadmin@zeroone:\\w> "\nexport PATH="$PATH:/usr/local/bin"\nalias tacos="taco-order --party-pack"\nalias ll="ls -la"',
 			),
-			'.plan': file(
-				'Find out who stole $0.75\nOrder tacos\nRemember to plug in the Kona\nFigure out what mr.pink does here',
-			),
-			'notes.txt': file(
-				"WHY IS THIS HAPPENING\n\n- 75 cents missing from Q3 billing\n- Cosworth says it's not him\n- Checked the taco fund, it's separate\n- Strange login at 03:14 AM from tty03\n- Nobody was here at 03:14 AM\n- ...right?",
-			),
-			'why_is_this_happening.txt': file(
-				"Day 1: It's 75 cents. Nobody cares.\nDay 2: I care.\nDay 3: The login times don't make sense.\nDay 4: Someone is using guest accounts.\nDay 5: I printed the logs. They fill a drawer.\nDay 6: I need more coffee.\nDay 7: I need more terminals.",
-			),
 		}),
 		dirk: dir({
 			'out_of_office.txt': file(
