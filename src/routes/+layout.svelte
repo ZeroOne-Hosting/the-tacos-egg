@@ -5,7 +5,7 @@
 </script>
 
 <svelte:head>
-	<title>ZeroOne Hosting</title>
+	<title>Zero One Recovery Kernel</title>
 	<meta name="description" content="ZeroOne Hosting Systems Inc. — Lowering expectations since our court date." />
 </svelte:head>
 
