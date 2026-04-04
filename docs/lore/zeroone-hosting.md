@@ -2,7 +2,7 @@
 
 ## Company Overview
 
-**ZeroOne Hosting** is a one-man hosting operation run out of a garage in Kelso, WA, approximately 50 miles north of Portland and within sight (on clear days) of Mt. St. Helens. It should not work. It mostly does.
+**ZeroOne Hosting** is a one-man hosting operation run out of a garage in Longview, WA, approximately 50 miles north of Portland and within sight (on clear days) of Mt. St. Helens. It should not work. It mostly does.
 
 **Tagline:** "If you have a problem, if no one else will host your shit..."
 
@@ -12,10 +12,10 @@
 
 ## Location
 
-- Kelso, WA — not Seattle, not Portland, not anywhere with a proper datacenter presence
+- Longview, WA — not Seattle, not Portland, not anywhere with a proper datacenter presence
 - Garage facility adjacent to residential property
 - Mt. St. Helens visible on clear days (has erupted once since the servers were installed; servers survived)
-- Primary food supply: Jorge at the Kelso Taco Bell, 1.2 miles away
+- Primary food supply: Jorge at the Longview Taco Bell, 1.2 miles away
 - Primary network dependency: whichever 3 of idpromnut's 7 neighbor WiFi SSIDs are currently reachable
 
 ---
@@ -103,7 +103,7 @@ Head of Documentation and API Relations. Always on vacation. The API docs exist 
 - Documentation quality: surprisingly good for someone who is never here
 
 ### Jorge
-Works at the Kelso Taco Bell. Not an employee of ZeroOne. Has nonetheless become load-bearing infrastructure. Jorge knows Randy's usual order, has accepted automated orders from TACO v0.3 without complaint (except for the 14-burrito incident), and represents the single most reliable supply chain ZeroOne has.
+Works at the Longview Taco Bell. Not an employee of ZeroOne. Has nonetheless become load-bearing infrastructure. Jorge knows Randy's usual order, has accepted automated orders from TACO v0.3 without complaint (except for the 14-burrito incident), and represents the single most reliable supply chain ZeroOne has.
 
 ### idpromnut
 The neighbor. Changes their WiFi SSID without warning or pattern. ZeroOne depends on 3 of idpromnut's 7 networks for redundancy. idpromnut is unaware of this dependency. This is a known risk that has been documented and not mitigated.

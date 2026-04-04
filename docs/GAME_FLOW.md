@@ -1,7 +1,7 @@
 # The Taco's Egg — Game Flow Document
 
 **Version:** 0.1
-**Setting:** 1988. ZeroOne Hosting. Garage, Kelso, WA.
+**Setting:** 1988. ZeroOne Hosting. Garage, Longview, WA.
 **Platform:** Web-based CRT terminal (LangGraph JS backend)
 
 ---
@@ -189,7 +189,7 @@ The intended discovery sequence:
 
    One login. 0 minutes duration. Nine seconds. From `gateway-pdx.uucp`.
 
-8. **`finger cosworth`** — shows the account has no real user. Created by a previous sysadmin (not this one). `gateway-pdx.uucp` is a UUCP relay host in Portland. That's... odd. ZeroOne is in Kelso. Why would someone dial in from Portland to use a test account for nine seconds?
+8. **`finger cosworth`** — shows the account has no real user. Created by a previous sysadmin (not this one). `gateway-pdx.uucp` is a UUCP relay host in Portland. That's... odd. ZeroOne is in Longview. Why would someone dial in from Portland to use a test account for nine seconds?
 
 #### The "Nobody Cares" Moment
 
@@ -239,7 +239,7 @@ Origin relay: tymnet-pdx.x25
 This is informational only. Contact postmaster if questions.
 ```
 
-`tymnet-pdx.x25`. Tymnet is a national packet-switching network. The call to ZeroOne came through Tymnet. Kelso's calling area doesn't include Tymnet gateways. Someone dialed into Tymnet and routed to ZeroOne. This is a long-distance call at minimum.
+`tymnet-pdx.x25`. Tymnet is a national packet-switching network. The call to ZeroOne came through Tymnet. Longview's calling area doesn't include Tymnet gateways. Someone dialed into Tymnet and routed to ZeroOne. This is a long-distance call at minimum.
 
 The chapter ends with this mail in the inbox, unanswered. The Tymnet revelation is the closing hook — it won't be *processed* narratively until Chapter 2.
 
@@ -607,7 +607,7 @@ The player watches. The player must not intervene. The intruder is methodically 
 
 If the session goes idle for more than 3 minutes, a warning appears: `[WARNING: Session idle. Intruder may disconnect.]` The player can take one action to refresh bait — add a new file to the monitored directory that will appear in the intruder's `ls` output. This resets the idle timer but risks looking artificial.
 
-**Taco interruption:** If the player ordered tacos during Chapter 3 or 4 that have a delayed delivery window, the TacoNet confirmation mail may arrive during the trace mini-game. The mail notification appears as a status bar flash: `[NEW MAIL: Jorge@tb-kelso.taconet.uucp]`. Opening it is optional but funny. It does not affect the trace.
+**Taco interruption:** If the player ordered tacos during Chapter 3 or 4 that have a delayed delivery window, the TacoNet confirmation mail may arrive during the trace mini-game. The mail notification appears as a status bar flash: `[NEW MAIL: Jorge@tb-longview.taconet.uucp]`. Opening it is optional but funny. It does not affect the trace.
 
 #### Chapter 5 Outcomes
 
@@ -860,7 +860,7 @@ A physical mail notification (rendered as a scanned document in the terminal, AS
 Scanned and digitized by Helen:
 
 To: Barbara Sherwin, SDINET Project, ZeroOne Hosting
-    Kelso, WA
+    Longview, WA
 
 I am writing to express interest in your SDI research
 coordination project. I would appreciate receiving any
@@ -960,13 +960,13 @@ TACO is designed to be used at specific natural pause points:
 During the trace mini-game, if the player has an active taco order in progress (orders take 20 in-game minutes to process and notify), the delivery confirmation arrives during the session. The notification format:
 
 ```
-[STATUS BAR FLASH: NEW MAIL from jorge@tb-kelso.taconet.uucp]
+[STATUS BAR FLASH: NEW MAIL from jorge@tb-longview.taconet.uucp]
 ```
 
 The player can open it (disrupting focus on the trace) or ignore it. Jorge's delivery confirmations are always extremely detailed and slightly wrong:
 
 ```
-From: jorge@tb-kelso.taconet.uucp Thu Nov 10 02:31:04 1988
+From: jorge@tb-longview.taconet.uucp Thu Nov 10 02:31:04 1988
 
 Your order #0847 is ready for pickup!
 
@@ -986,9 +986,9 @@ Drive thru closes in 8 minutes.
 
 **Randy:** If sent tacos, Randy eats them. Later that day, a `wall` message appears: `randy: those tacos werent on the company card right?`
 
-**Agent Paulson:** Declines on policy grounds in the mail, then two days later: `r.paulson@fbi.gov: Out of curiosity, does that Taco Bell in Kelso deliver? Asking for a colleague.` He gets a Chalupa in a follow-up order confirmation that the player didn't place. Jorge entered it manually. Jorge is doing his best.
+**Agent Paulson:** Declines on policy grounds in the mail, then two days later: `r.paulson@fbi.gov: Out of curiosity, does that Taco Bell in Longview deliver? Asking for a colleague.` He gets a Chalupa in a follow-up order confirmation that the player didn't place. Jorge entered it manually. Jorge is doing his best.
 
-**Jorge:** The player can `talk jorge@tb-kelso.taconet.uucp` during business hours. Jorge is not on the ZeroOne network; this doesn't actually work. But the game returns: `talk: connection refused by remote host tb-kelso.taconet.uucp`. The player can then mail `jorge@tb-kelso.taconet.uucp` and Jorge will respond (slowly, because he types his responses on the same terminal he uses to enter orders). Jorge knows nothing about the investigation but has opinions about the new Chalupa and once saw a "weird van parked outside" that turned out to be a cable TV installer.
+**Jorge:** The player can `talk jorge@tb-longview.taconet.uucp` during business hours. Jorge is not on the ZeroOne network; this doesn't actually work. But the game returns: `talk: connection refused by remote host tb-longview.taconet.uucp`. The player can then mail `jorge@tb-longview.taconet.uucp` and Jorge will respond (slowly, because he types his responses on the same terminal he uses to enter orders). Jorge knows nothing about the investigation but has opinions about the new Chalupa and once saw a "weird van parked outside" that turned out to be a cable TV installer.
 
 ### Plot-Relevant Information Hidden in Taco Orders
 
@@ -1287,7 +1287,7 @@ One of their mails is always topical: during Chapter 3's quiet period, someone h
 **Communication style:** Technical, measured, bureaucratically careful but genuinely helpful.
 **Narrative function:** The Chapter 6 breakthrough. The multi-site pattern is only visible through CERT's coordination.
 
-### Jorge (Kelso Taco Bell)
+### Jorge (Longview Taco Bell)
 
 **Role:** Comic anchor. Reliable presence throughout the game.
 **Communication style:** Extremely earnest. Slightly confused by the technology. Never misses an order.
@@ -1320,7 +1320,7 @@ At most points in Acts II and III, the player has access to 2–3 concurrent thr
 
 ### Thread Convergence
 
-All three threads converge at Chapter 7. Thread A (billing pattern) + Thread B (account access method) + Thread C (network origin) together form the complete case: someone in West Germany used a backdoor test account to escalate privileges and steal defense contractor materials from a small hosting shop in Kelso, Washington, as part of a coordinated multi-site operation.
+All three threads converge at Chapter 7. Thread A (billing pattern) + Thread B (account access method) + Thread C (network origin) together form the complete case: someone in West Germany used a backdoor test account to escalate privileges and steal defense contractor materials from a small hosting shop in Longview, Washington, as part of a coordinated multi-site operation.
 
 ### Thread Cross-Pollination
 
@@ -1647,7 +1647,7 @@ Geographic origin: West Germany, Bremen relay node
 
 ```
 [INCOMING PHYSICAL MAIL — ZeroOne Hosting — Nov 30 1988]
-Addressee: Barbara Sherwin, SDINET Project, ZeroOne Hosting, Kelso WA
+Addressee: Barbara Sherwin, SDINET Project, ZeroOne Hosting, Longview WA
 Return address: Prague, Czechoslovakia
 Content: Request to join SDINET mailing list and receive published materials
 Status: No such person at this address — retained as evidence

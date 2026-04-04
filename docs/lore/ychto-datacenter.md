@@ -101,7 +101,7 @@ The $400 switch from eBay that's been running for six years has more credibility
 
 ## ZeroOne as Foil
 
-ZeroOne Hosting (Kelso, WA) is what happens when Yolo Colo's principles are applied in the wrong order — or not at all.
+ZeroOne Hosting (Longview, WA) is what happens when Yolo Colo's principles are applied in the wrong order — or not at all.
 
 | Yolo Colo | ZeroOne |
 |-----------|---------|

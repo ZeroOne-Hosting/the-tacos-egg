@@ -1,6 +1,6 @@
 # The Taco's Egg
 
-A web-based adventure game where you play as a sysadmin at ZeroOne Hosting — a gloriously terrible hosting company run out of a garage in Kelso, Washington. Someone used $0.75 of unauthorized compute time. You're going to find out who.
+A web-based adventure game where you play as a sysadmin at ZeroOne Hosting — a gloriously terrible hosting company run out of a garage in Longview, Washington. Someone used $0.75 of unauthorized compute time. You're going to find out who.
 
 Inspired by Cliff Stoll's [The Cuckoo's Egg](https://www.amazon.com/Cuckoos-Egg-Tracking-Computer-Espionage/dp/1416507787).
 

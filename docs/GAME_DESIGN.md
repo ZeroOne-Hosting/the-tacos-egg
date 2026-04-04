@@ -31,7 +31,7 @@
 
 ## 1. Overview
 
-**The Taco's Egg** is a single-player web-based mystery game set in 1988. The player is a systems administrator at **ZeroOne Hosting** — a hilariously under-resourced hosting operation run out of a garage in Kelso, Washington, connected to the early ARPANET on a wing, a prayer, and a leased line that goes out whenever someone parks too close to the junction box. What begins as a routine $0.75 accounting discrepancy in the compute billing system slowly unravels into a full-blown cyber-espionage investigation.
+**The Taco's Egg** is a single-player web-based mystery game set in 1988. The player is a systems administrator at **ZeroOne Hosting** — a hilariously under-resourced hosting operation run out of a garage in Longview, Washington, connected to the early ARPANET on a wing, a prayer, and a leased line that goes out whenever someone parks too close to the junction box. What begins as a routine $0.75 accounting discrepancy in the compute billing system slowly unravels into a full-blown cyber-espionage investigation.
 
 ZeroOne's tagline is "Lowering expectations since our court date." Their backup power is an electric Hyundai Kona. The staff runs on Taco Bell. The datacenter is a literal garage. None of this stops the federal government from eventually caring very much about what is happening on their network.
 
@@ -51,7 +51,7 @@ This fantasy has three key components:
 
 **Escalation.** What starts as a bookkeeping annoyance becomes a national security matter. Each chapter widens the blast radius — from a departmental accounting error to an international espionage ring — while never losing the intimacy of one person at a terminal at 2am.
 
-**Absurdity held straight.** The game knows it is funny that the fate of NATO defense contractor research is contingent on whether the player can keep a hacker on the line long enough to complete a phone trace — and that the sysadmin tracking them down works out of a garage in Kelso, Washington. It plays this completely seriously. The comedy comes from commitment to the bit.
+**Absurdity held straight.** The game knows it is funny that the fate of NATO defense contractor research is contingent on whether the player can keep a hacker on the line long enough to complete a phone trace — and that the sysadmin tracking them down works out of a garage in Longview, Washington. It plays this completely seriously. The comedy comes from commitment to the bit.
 
 ---
 
@@ -414,7 +414,7 @@ The player receives their first mail from Helen in billing. There's a $0.75 disc
 
 The tutorial teaches: `mail`, `sa`, `last`, `who`, `grep`. By the end, the player has found the specific login session responsible for the discrepancy — a 75-second connection from an unrecognized source host that billed under the account of a client who stopped paying six months ago and whose account Randy never got around to closing.
 
-Closing hook: The source host resolves to a gateway well outside the Kelso, WA calling area.
+Closing hook: The source host resolves to a gateway well outside the Longview, WA calling area.
 
 **Chapter 2: Ghost in the Timesharing System**
 
@@ -581,7 +581,7 @@ InvestigationState
 
 While waiting for the phone company to complete a trace, Cliff Stoll (the real sysadmin who inspired this game) was known for baking cookies and feeding people who helped him. At ZeroOne Hosting, the staff runs on Taco Bell. This is not a lifestyle choice — it is an operational reality. The nearest sit-down restaurant is forty minutes away. The nearest Taco Bell is six minutes.
 
-In **The Taco's Egg**, the player's ordering mechanism is TacoNet — a dial-up Taco Bell ordering terminal that Randy jury-rigged into the company's network sometime in 1986, ostensibly as a "proof of concept for e-commerce." It connects to a dedicated line at the Kelso Taco Bell, where a very patient employee named Jorge has been manually keying in orders for two years.
+In **The Taco's Egg**, the player's ordering mechanism is TacoNet — a dial-up Taco Bell ordering terminal that Randy jury-rigged into the company's network sometime in 1986, ostensibly as a "proof of concept for e-commerce." It connects to a dedicated line at the Longview Taco Bell, where a very patient employee named Jorge has been manually keying in orders for two years.
 
 It is ridiculous. It is also the game's primary comedy mechanism and a pressure release valve between tense investigation segments.
 
@@ -647,9 +647,9 @@ TacoPoints are earned with every order. They serve no mechanical purpose except 
 
 ### The Taco Bell
 
-TacoNet connects to the **Kelso Taco Bell** on Minor Road. Jorge, the night-shift manager, has been fielding TacoNet orders since Randy cold-called the franchise in 1986 and convinced someone that this was the future of fast food ordering. Jorge has a laminated card explaining the procedure taped to the register. He is professionally skeptical but has never missed an order.
+TacoNet connects to the **Longview Taco Bell** on Minor Road. Jorge, the night-shift manager, has been fielding TacoNet orders since Randy cold-called the franchise in 1986 and convinced someone that this was the future of fast food ordering. Jorge has a laminated card explaining the procedure taped to the register. He is professionally skeptical but has never missed an order.
 
-If the player investigates the TacoNet connection (entirely possible using in-game tools), they will find a single host: `tb-kelso.taconet.uucp`. Its only service is a UUCP mail relay for order forms. This is not a plot point. It is just there for the player who wants to look.
+If the player investigates the TacoNet connection (entirely possible using in-game tools), they will find a single host: `tb-longview.taconet.uucp`. Its only service is a UUCP mail relay for order forms. This is not a plot point. It is just there for the player who wants to look.
 
 ---
 
