@@ -139,6 +139,7 @@ export const WHO_POOL = [
 	'raidowl',
 	'lempa',
 	'ychto',
+	'thefathacker',
 ];
 
 export function pick<T>(arr: T[]): T {
