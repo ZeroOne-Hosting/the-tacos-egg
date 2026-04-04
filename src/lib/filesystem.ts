@@ -213,6 +213,12 @@ const FILESYSTEM: FSDir = dir({
 			'.bashrc': file(
 				'# .bashrc\nexport PS1="sysadmin@zeroone:\\w> "\nexport PATH="$PATH:/usr/local/bin"\nalias tacos="taco-order --party-pack"\nalias ll="ls -la"',
 			),
+			'.plan': file(
+				'Currently investigating a $0.75 billing discrepancy.\nRandy says its nothing. Checking anyway.',
+			),
+			'notes.txt': file(
+				'Billing investigation notes\n\nHelen flagged a 75 cents gap in the October compute invoices.\nThe discrepancy traces to the cosworth account: 9 seconds of CPU on Oct 6.\nLogin from gateway-pdx.uucp at 02:17. Not a local terminal.\n\nRandy says he left the session open. Timestamps do not match.',
+			),
 		}),
 		dirk: dir({
 			'out_of_office.txt': file(
@@ -237,9 +243,24 @@ const FILESYSTEM: FSDir = dir({
 	}),
 });
 
+function deepClone(node: FSNode): FSNode {
+	if (node.type === 'file') {
+		return { type: 'file', content: node.content };
+	}
+	const children: Record<string, FSNode> = {};
+	for (const [name, child] of Object.entries(node.children)) {
+		children[name] = deepClone(child);
+	}
+	return { type: 'dir', children };
+}
+
 export class VirtualFS {
-	private root: FSDir = FILESYSTEM;
+	private root: FSDir;
 	private cwd = '/';
+
+	constructor() {
+		this.root = deepClone(FILESYSTEM) as FSDir;
+	}
 
 	resolve(path: string): string {
 		if (!path || path === '') return this.cwd;
@@ -311,5 +332,37 @@ export class VirtualFS {
 		const node = this.getNode(path);
 		if (!node || node.type !== 'file') return null;
 		return node.content;
+	}
+
+	addNode(path: string, node: FSNode): boolean {
+		const resolved = this.resolve(path);
+		const parts = resolved.split('/').filter(Boolean);
+		if (parts.length === 0) return false;
+		const name = parts[parts.length - 1];
+		const parentPath = `/${parts.slice(0, -1).join('/')}`;
+		const parent = this.getNode(parentPath);
+		if (!parent || parent.type !== 'dir') return false;
+		parent.children[name] = node;
+		return true;
+	}
+
+	removeNode(path: string): boolean {
+		const resolved = this.resolve(path);
+		const parts = resolved.split('/').filter(Boolean);
+		if (parts.length === 0) return false;
+		const name = parts[parts.length - 1];
+		const parentPath = `/${parts.slice(0, -1).join('/')}`;
+		const parent = this.getNode(parentPath);
+		if (!parent || parent.type !== 'dir') return false;
+		if (!(name in parent.children)) return false;
+		delete parent.children[name];
+		return true;
+	}
+
+	updateFile(path: string, content: string): boolean {
+		const node = this.getNode(path);
+		if (!node || node.type !== 'file') return false;
+		node.content = content;
+		return true;
 	}
 }

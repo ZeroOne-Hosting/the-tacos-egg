@@ -183,4 +183,69 @@ describe('VirtualFS', () => {
 			expect(fs.isDir('/etc/passwd')).toBe(false);
 		});
 	});
+
+	describe('addNode', () => {
+		it('creates a file under an existing directory', () => {
+			expect(fs.addNode('/tmp/newfile.txt', { type: 'file', content: 'hello' })).toBe(true);
+			expect(fs.cat('/tmp/newfile.txt')).toBe('hello');
+		});
+
+		it('creates a directory under an existing directory', () => {
+			expect(fs.addNode('/tmp/newdir', { type: 'dir', children: {} })).toBe(true);
+			expect(fs.isDir('/tmp/newdir')).toBe(true);
+		});
+
+		it('returns false when the parent directory does not exist', () => {
+			expect(fs.addNode('/nonexistent/file.txt', { type: 'file', content: '' })).toBe(false);
+		});
+
+		it('returns false when the parent path is a file, not a directory', () => {
+			expect(fs.addNode('/etc/passwd/child', { type: 'file', content: '' })).toBe(false);
+		});
+
+		it('mutations are instance-local (deep-clone isolation)', () => {
+			const other = new VirtualFS();
+			fs.addNode('/tmp/isolated.txt', { type: 'file', content: 'only here' });
+			expect(other.cat('/tmp/isolated.txt')).toBeNull();
+		});
+	});
+
+	describe('removeNode', () => {
+		it('removes an existing file', () => {
+			expect(fs.removeNode('/tmp/scratch.txt')).toBe(true);
+			expect(fs.exists('/tmp/scratch.txt')).toBe(false);
+		});
+
+		it('removes an existing directory', () => {
+			expect(fs.removeNode('/tmp')).toBe(true);
+			expect(fs.exists('/tmp')).toBe(false);
+		});
+
+		it('returns false for a nonexistent path', () => {
+			expect(fs.removeNode('/tmp/does-not-exist.txt')).toBe(false);
+		});
+
+		it('returns false when the parent does not exist', () => {
+			expect(fs.removeNode('/no/such/path')).toBe(false);
+		});
+
+		it('returns false when targeting root', () => {
+			expect(fs.removeNode('/')).toBe(false);
+		});
+	});
+
+	describe('updateFile', () => {
+		it('updates file content', () => {
+			expect(fs.updateFile('/tmp/scratch.txt', 'updated content')).toBe(true);
+			expect(fs.cat('/tmp/scratch.txt')).toBe('updated content');
+		});
+
+		it('returns false for a nonexistent file', () => {
+			expect(fs.updateFile('/tmp/ghost.txt', 'data')).toBe(false);
+		});
+
+		it('returns false when targeting a directory', () => {
+			expect(fs.updateFile('/etc', 'data')).toBe(false);
+		});
+	});
 });
