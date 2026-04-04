@@ -3,10 +3,14 @@ import type { GameState } from '../GameState.js';
 import type { CommandResult } from './index.js';
 
 const FINGER_COSWORTH = [
-	'Login: cosworth                         Name: Cosworth Industrial Services',
+	'Login: cosworth                         Name: Cosworth Mallard',
 	'Directory: /home/cosworth               Shell: /bin/csh',
+	'Office: Waterfowl Solutions LLC',
 	'Last login Thu Oct  6 02:17 on ttyp3 from gateway-pdx.uucp',
-	'No Plan.',
+	'Plan:',
+	'Out of office Oct 3-15.',
+	'Attending PacNW Fowl Expo & Waterfowl Convention, Portland OR.',
+	'No laptop. No modem. No remote access. OFFLINE entire trip.',
 ];
 
 const FINGER_ALL = [

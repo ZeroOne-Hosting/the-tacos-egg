@@ -18,8 +18,9 @@ const GECOS: Record<string, string> = {
 	salem: 'Salem,Card Table,555-0102,Knows too much',
 	craft: 'Craft,Extension Cord,555-0103,Freelance',
 	coffee: 'Coffee Machine Account,Break Room,555-0104,Sentient',
-	hacker: 'Unknown,Unknown,555-0105,Do not ask',
-	cosworth: 'Cosworth,Garage Door,555-0106,Controls the door opener',
+	hacker: 'TheFatHacker,Australia,+61-555-0105,Ships A&W Root Beer by the pallet',
+	cosworth:
+		'Cosworth Mallard,Waterfowl Solutions LLC,555-0106,Controls the garage door opener. Currently at PacNW Fowl Expo (Oct 3-15). Should NOT be logged in.',
 	'mr.pink': 'Mr. Pink,Disco Ball,555-0107,Do not activate during business hours',
 	idpromnut: 'idpromnut (neighbor),Next Door,555-0108,Currently angry about wifi',
 	dirk: 'Dirk,On Vacation,555-0109,Has the API docs',
@@ -34,7 +35,7 @@ const GECOS: Record<string, string> = {
 	raidowl: 'RaidOwl,Remote,555-0118,Security',
 	lempa: 'Lempa,Unknown,555-0119,',
 	ychto: 'Ychto,Yolo Colo,555-0120,Not here right now',
-	thefathacker: 'TheFatHacker,Australia,+61-555-0121,Ships A&W Root Beer by the pallet',
+	vince: 'Vince,Remote,555-0122,',
 };
 
 function buildPasswd(): string {
@@ -95,7 +96,7 @@ const FILESYSTEM: FSDir = dir({
 			man: dir({
 				man1: dir({
 					'taco-order.1': file(
-						'TACO-ORDER(1) - Taco Automated Curro Ordering\n\nNAME\n    taco-order - place orders with the Kelso Taco Bell\n\nSYNOPSIS\n    taco-order [--extra-cheese] [--baja-blast] [--party-pack]\n\nDESCRIPTION\n    Interfaces with Jorge at the Kelso Taco Bell via UUCP.\n    Dirk has the API docs. Dirk is on vacation.\n\nBUGS\n    Yes.\n\nSEE ALSO\n    hunger(1), regret(1)',
+						'TACO-ORDER(1) - Taco Automated Curro Ordering\n\nNAME\n    taco-order - place orders with the Longview Taco Bell\n\nSYNOPSIS\n    taco-order [--extra-cheese] [--baja-blast] [--party-pack]\n\nDESCRIPTION\n    Interfaces with Jorge at the Longview Taco Bell via UUCP.\n    Dirk has the API docs. Dirk is on vacation.\n\nBUGS\n    Yes.\n\nSEE ALSO\n    hunger(1), regret(1)',
 					),
 				}),
 			}),
@@ -160,7 +161,7 @@ const FILESYSTEM: FSDir = dir({
 				'# mainframe: ask Dirk',
 		),
 		motd: file(
-			'Zero One Recovery Kernel — ZORK v2.1\n"Lowering expectations since our court date"\nKelso, WA - Garage Datacenter',
+			'Zero One Recovery Kernel — ZORK v2.1\n"Lowering expectations since our court date"\nLongview, WA - Garage Datacenter',
 		),
 		'resolv.conf': file(
 			"# DNS - using neighbor's router\nnameserver 192.168.1.1\n# backup: written on sticky note somewhere",
@@ -225,7 +226,7 @@ const FILESYSTEM: FSDir = dir({
 					'[1986-08-07 12:30] ORDER #0044 — all: party pack — STATUS: delivered. mr.pink expensed it. randy furious.\n' +
 					'[1986-08-08 12:19] ORDER #0045 — dave: 2x taco, 1x nachos — STATUS: delivered\n' +
 					'[1986-08-08 12:19] ORDER #0045 — sysadmin: 1x burrito, 1x baja blast — STATUS: baja blast not invented yet. substituted mountain dew.\n' +
-					'[1986-08-09 12:44] ORDER #0045b — thefathacker: REMOTE ORDER (Australia) — 3x taco, 1x nachos, 1x A&W root beer — STATUS: jorge confused by international UUCP relay. tacos undeliverable. root beer pallet in transit from US distributor. customs says 6-8 weeks.\n' +
+					'[1986-08-09 12:44] ORDER #0045b — hacker: REMOTE ORDER (Australia) — 3x taco, 1x nachos, 1x A&W root beer — STATUS: jorge confused by international UUCP relay. tacos undeliverable. root beer pallet in transit from US distributor. customs says 6-8 weeks.\n' +
 					'[1986-08-11 08:00] ORDER #0046 — PENDING — orders due by 11:30. see mail.',
 			),
 			'neighbor-complaints': file(
@@ -310,7 +311,7 @@ const FILESYSTEM: FSDir = dir({
 					'google "hyundai kona as ups"\n' +
 					'google "how many servers can a kona power"\n' +
 					'google "taco bell franchise cost"\n' +
-					'google "taco bell franchise cost kelso wa"\n' +
+					'google "taco bell franchise cost longview wa"\n' +
 					'google "how to expense tacos as business meal"',
 			),
 			'.plan': file("Expand to second garage. Maybe the neighbor's."),
@@ -318,6 +319,26 @@ const FILESYSTEM: FSDir = dir({
 		cosworth: dir({
 			'.rhosts': file('+ +'),
 			'.cshrc': file('# default .cshrc\nset prompt = "% "\nset history = 100'),
+			'.plan': file(
+				'Out of office Oct 3-15.\nAttending PacNW Fowl Expo & Waterfowl Convention, Portland OR.\n\nPresenting: "Mallard Migration Patterns & Their Impact on Server Room Ventilation"\nBooth 14, Hall B.\n\nFor garage door issues contact randy.\nFor billing contact helen.\nDo NOT contact me about the disco ball.',
+			),
+			'calendar.txt': file(
+				'COSWORTH MALLARD — OCTOBER 1988\n\n' +
+					'Oct  1  Sat  Pack for Fowl Expo\n' +
+					'Oct  2  Sun  Drive to Portland\n' +
+					'Oct  3  Mon  PacNW Fowl Expo — Registration & Opening Keynote\n' +
+					'Oct  4  Tue  Expo — "Duck Identification Workshop"\n' +
+					'Oct  5  Wed  Expo — Vendor Hall (goose decoy suppliers)\n' +
+					'Oct  6  Thu  Expo — Panel: "Are Geese Infrastructure?" <<<< SHOULD BE HERE ALL DAY\n' +
+					'Oct  7  Fri  Expo — Waterfowl Photography Contest\n' +
+					'Oct  8  Sat  Expo — "Advanced Mallard Husbandry"\n' +
+					'Oct  9  Sun  Day off — Birding at Sauvie Island\n' +
+					'Oct 10  Mon  Expo — "Goose Management in Data Center Environments"\n' +
+					'Oct 11  Tue  Expo — Awards Banquet\n' +
+					'Oct 12  Wed  Drive home\n' +
+					'Oct 13  Thu  Back at ZeroOne (probably)\n' +
+					'\nNOTE: No laptop. No modem. No remote access. OFFLINE entire trip.',
+			),
 		}),
 	}),
 	tmp: dir({

@@ -6,7 +6,7 @@ export type OutputLine = {
 export const BOOT_SEQUENCE: OutputLine[] = [
 	{ text: 'Zero One Recovery Kernel — ZORK v2.1', instant: true },
 	{ text: '"Lowering expectations since our court date"', instant: true },
-	{ text: 'Kelso, WA - Garage Datacenter', instant: true },
+	{ text: 'Longview, WA - Garage Datacenter', instant: true },
 	{ text: '', instant: true },
 	{ text: 'Performing system checks...', instant: true },
 	{ text: 'Memory: 640K (should be enough for anyone)', instant: true },
@@ -64,7 +64,7 @@ incident. We literally cannot. The Kona's warranty doesn't cover this.
 
 Also a raccoon got in. It did not touch the servers. Respect.
 
--- Ops (Dave)`,
+-- Ops (ychto)`,
 	},
 	{
 		id: 3,
@@ -79,9 +79,10 @@ Subject: GROUP TACO ORDER - respond by 11:30
 Doing a Taco Bell run at noon. Reply with your order.
 
 Current orders:
-  Dave    - 3x taco, 1x burrito
-  Sandra  - 2x taco (no sour cream, she means it this time)
-  Mike    - waiting to see what Dave gets and then getting the same
+  ychto     - 2x taco, 1x burrito (labeled, bagged separately, receipt stapled)
+  mr.pink   - 1x nachos, 1x baja blast (not invented yet, he doesn't care)
+  randy     - "whatever's cheapest" (last time this got him a cinnamon twist)
+  cosworth  - N/A (at Fowl Expo, but someone keeps ordering for him??)
 
 If you don't reply by 11:30 you get whatever's left over. Last week
 that was a cinnamon twist and nobody was happy.
@@ -106,13 +107,42 @@ The Kona is at 23% battery. This is the backup power supply for
 Rack 1 and the network switch. If it dies so does the internet.
 
 Charging schedule:
-  Sun night  - Mike's house (he said it's fine, don't ask again)
+  Sun night  - ychto's house (he said it's fine, don't ask again)
   Mon-Wed    - Neighbor's extension cord (see UPS config)
   Thu-Sat    - TBD / pray
 
 Action required: plug in the car.
 
 -- KonaWatch v1.0 (runs on the Kona's own battery, we know)`,
+	},
+	{
+		id: 5,
+		from: 'cosworth@zeroone.local',
+		subject: 'Out of office Oct 3-15 — Fowl Expo',
+		date: 'Mon Oct 3 06:12:44 1988',
+		body: `From: cosworth@zeroone.local
+To: all@zeroone.local
+Date: Mon Oct 3 06:12:44 1988
+Subject: Out of office Oct 3-15 — Fowl Expo
+
+All,
+
+I will be at the PacNW Fowl Expo & Waterfowl Convention in
+Portland from Oct 3 through Oct 15. Presenting on mallard
+migration patterns, booth 14, Hall B.
+
+I will NOT have a laptop or modem with me. No remote access.
+Completely offline for the duration. Do not expect me to log
+in for any reason.
+
+For garage door issues: contact Randy.
+For billing: contact Helen.
+For disco ball complaints: I don't care, ask mr.pink.
+
+See you on the 13th.
+
+-- Cosworth Mallard
+   Waterfowl Solutions LLC`,
 	},
 ];
 
@@ -139,7 +169,7 @@ export const WHO_POOL = [
 	'raidowl',
 	'lempa',
 	'ychto',
-	'thefathacker',
+	'vince',
 ];
 
 export function pick<T>(arr: T[]): T {
