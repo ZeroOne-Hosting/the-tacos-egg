@@ -1,3 +1,5 @@
+set shell := ["pwsh", "-NoProfile", "-Command"]
+
 default: dev
 
 dev:
@@ -16,7 +18,7 @@ install:
     bun install
 
 clean:
-    rm -rf node_modules .svelte-kit build
+    Remove-Item -Recurse -Force -ErrorAction SilentlyContinue node_modules, .svelte-kit, build
 
 format:
     bunx biome check --write .
