@@ -1,15 +1,11 @@
 <script lang="ts">
 import { onMount, tick } from 'svelte';
-import { VirtualFS } from '$lib/filesystem.js';
-import {
-	BOOT_SEQUENCE,
-	EMAILS,
-	generatePs,
-	generateWho,
-	HELP_TEXT,
-	WHO_POOL,
-} from '$lib/game-data.js';
 import { MailClient } from '$lib/components/MailClient.js';
+import { dispatch } from '$lib/engine/commands/index.js';
+import { checkNewEvidence } from '$lib/engine/evidence.js';
+import { GameState } from '$lib/engine/GameState.js';
+import { VirtualFS } from '$lib/filesystem.js';
+import { BOOT_SEQUENCE, EMAILS } from '$lib/game-data.js';
 
 type ZorkEngine = {
 	sendCommand(input: string): string[];
@@ -22,6 +18,7 @@ const BOOT_LINE_DELAY_MS = 90;
 
 const vfs = new VirtualFS();
 vfs.cd(HOME);
+const gameState = GameState.load() ?? GameState.create();
 
 function buildPrompt(): string {
 	const cwd = vfs.pwd();
@@ -145,93 +142,59 @@ async function handleCommand(raw: string): Promise<void> {
 	commandHistory = [cmd, ...commandHistory];
 	historyIndex = -1;
 
-	// preserve original casing for path arguments, but parse verb lowercase
-	const parts = cmd.split(/\s+/);
-	const verb = parts[0].toLowerCase();
+	const result = dispatch(cmd, gameState, vfs, commandHistory);
 
-	if (verb === 'help') {
-		await typeLines(HELP_TEXT);
-	} else if (verb === 'clear') {
-		outputLines = [];
-	} else if (verb === 'date') {
-		await typeLines(['Mon Aug 11 09:14:22 PDT 1986']);
-	} else if (verb === 'who') {
-		await typeLines(generateWho());
-	} else if (verb === 'ps') {
-		await typeLines(generatePs());
-	} else if (verb === 'pwd') {
-		await typeLines([vfs.pwd()]);
-	} else if (verb === 'cd') {
-		const target = parts[1] ?? HOME;
-		if (!vfs.cd(target)) {
-			await typeLines([`cd: ${target}: No such file or directory`]);
-		}
-	} else if (verb === 'ls') {
-		const args = parts.slice(1);
-		const showHidden = args.includes('-a') || args.includes('-la') || args.includes('-al');
-		const pathArg = args.find((a) => !a.startsWith('-'));
-		const entries = vfs.ls(pathArg, showHidden);
-		if (entries.length === 0 && pathArg) {
-			const node = vfs.getNode(vfs.resolve(pathArg));
-			if (!node) {
-				await typeLines([`ls: ${pathArg}: No such file or directory`]);
-			} else {
-				await typeLines([pathArg]);
+	switch (result.type) {
+		case 'lines':
+			if (result.lines.length > 0) {
+				await typeLines(result.lines);
 			}
-		} else {
-			await typeLines(entries.length > 0 ? [entries.join('  ')] : ['']);
-		}
-	} else if (verb === 'cat') {
-		const pathArg = parts[1];
-		if (!pathArg) {
-			await typeLines(['cat: missing operand']);
-		} else {
-			const content = vfs.cat(pathArg);
-			if (content === null) {
-				const node = vfs.getNode(vfs.resolve(pathArg));
-				if (!node) {
-					await typeLines([`cat: ${pathArg}: No such file or directory`]);
-				} else {
-					await typeLines([`cat: ${pathArg}: Is a directory`]);
+			break;
+		case 'clear':
+			outputLines = [];
+			break;
+		case 'mail':
+			mailClient = new MailClient(EMAILS);
+			mailActive = true;
+			renderMailClient();
+			break;
+		case 'zork':
+			await appendLine('Loading Zork I...');
+			try {
+				const { initZork } = await import('$lib/games/zork.js');
+				const engine = await initZork();
+				zorkEngine = engine;
+				zorkActive = true;
+				const opening = engine.getInitialText();
+				for (const line of opening) {
+					await appendLine(line);
 				}
-			} else {
-				await typeLines(content === '' ? [''] : content.split('\n'));
+			} catch (err) {
+				await appendLine(
+					`zork: failed to load: ${err instanceof Error ? err.message : String(err)}`,
+				);
 			}
-		}
-	} else if (verb === 'mail') {
-		mailClient = new MailClient(EMAILS);
-		mailActive = true;
-		renderMailClient();
-	} else if (verb === 'tacos') {
-		await typeLines([
-			'Taco Automated Curro Ordering (TACO) v0.3',
-			'"If you have a problem with our tacos, call someone who cares."',
-			'',
-			'  [1] Taco         $0.25',
-			'  [2] Burrito      $0.50',
-			'  [3] Nachos       $0.35',
-			'  [4] Cinnamon Twist $0.15  (last resort)',
-			'',
-			'Order integration pending. Dirk has the API docs.',
-			'Dirk is on vacation. No ETA.',
-		]);
-	} else if (verb === 'zork') {
-		await appendLine('Loading Zork I...');
-		try {
-			const { initZork } = await import('$lib/games/zork.js');
-			const engine = await initZork();
-			zorkEngine = engine;
-			zorkActive = true;
-			const opening = engine.getInitialText();
-			for (const line of opening) {
-				await appendLine(line);
-			}
-		} catch (err) {
-			await appendLine(`zork: failed to load: ${err instanceof Error ? err.message : String(err)}`);
-		}
-	} else {
-		await typeLines([`${cmd}: command not found`]);
+			break;
+		case 'not-found':
+			await typeLines([`${cmd}: command not found`]);
+			break;
 	}
+
+	// Post-command: check for new evidence
+	const newEvidence = checkNewEvidence(gameState);
+	for (const id of newEvidence) {
+		await appendLine(`[EVIDENCE COLLECTED] ${id}`);
+	}
+
+	// Check chapter advancement
+	if (gameState.canAdvance()) {
+		gameState.advanceChapter();
+		await appendLine('');
+		await appendLine(`[CHAPTER ${gameState.chapter}]`);
+	}
+
+	// Save state
+	gameState.save();
 }
 
 async function handleZorkInput(raw: string): Promise<void> {
