@@ -413,7 +413,6 @@ export const HELP_TEXT = [
 	'  cd [path]    Change directory',
 	'  pwd          Print working directory',
 	'  mail         Read your mail',
-	'  read <n>     Read message number <n>',
 	'  who          Show logged-in users',
 	'  ps           Show running processes',
 	'  date         Show current date and time',

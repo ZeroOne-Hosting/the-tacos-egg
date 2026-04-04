@@ -202,14 +202,6 @@ async function handleCommand(raw: string): Promise<void> {
 		mailClient = new MailClient(EMAILS);
 		mailActive = true;
 		renderMailClient();
-	} else if (verb === 'read') {
-		const n = parseInt(parts[1] ?? '', 10);
-		const email = EMAILS.find((e) => e.id === n);
-		if (Number.isNaN(n) || !email) {
-			await typeLines([`No message ${parts[1] ?? ''}.`]);
-		} else {
-			await typeLines(email.body.split('\n'));
-		}
 	} else if (verb === 'tacos') {
 		await typeLines([
 			'Taco Automated Curro Ordering (TACO) v0.3',
